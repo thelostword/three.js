@@ -16,7 +16,8 @@
 			{
 				"imports": {
 					"three": "../build/three.webgpu.js",
-					"three/tsl": "../build/three.webgpu.js",
+					"three/webgpu": "../build/three.webgpu.js",
+					"three/tsl": "../build/three.tsl.js",
 					"three/addons/": "./jsm/"
 				}
 			}
@@ -105,7 +106,7 @@
 				const instanceUniform = nodeObject( new InstanceUniformNode() );
 				const cubeTextureNode = cubeTexture( cTexture );
 
-				const material = new THREE.MeshStandardNodeMaterial();
+				const material = new THREE.MeshBasicNodeMaterial();
 				material.colorNode = instanceUniform.add( cubeTextureNode );
 				material.emissiveNode = instanceUniform.mul( cubeTextureNode );
 

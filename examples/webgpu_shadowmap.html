@@ -15,7 +15,8 @@
 			{
 				"imports": {
 					"three": "../build/three.webgpu.js",
-					"three/tsl": "../build/three.webgpu.js",
+					"three/webgpu": "../build/three.webgpu.js",
+					"three/tsl": "../build/three.tsl.js",
 					"three/addons/": "./jsm/"
 				}
 			}
@@ -24,7 +25,7 @@
 		<script type="module">
 
 			import * as THREE from 'three';
-			import { mx_fractal_noise_vec3, positionWorld, vec4, tslFn, color, vertexIndex } from 'three/tsl';
+			import { mx_fractal_noise_vec3, positionWorld, vec4, Fn, color, vertexIndex, hash } from 'three/tsl';
 
 			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
@@ -93,9 +94,9 @@
 
 				const materialColor = vec4( 1, 0, 1, .5 );
 			
-				const discardNode = vertexIndex.hash().greaterThan( 0.5 );
+				const discardNode = hash( vertexIndex ).greaterThan( 0.5 );
 
-				materialCustomShadow.colorNode = tslFn( () => {
+				materialCustomShadow.colorNode = Fn( () => {
 
 					discardNode.discard();
 
@@ -104,7 +105,7 @@
 				} )();
 
 
-				materialCustomShadow.shadowNode = tslFn( () => {
+				materialCustomShadow.castShadowNode = Fn( () => {
 
 					discardNode.discard();
 
@@ -144,7 +145,7 @@
 					specular: 0x111111
 				} );
 
-				planeMaterial.shadowPositionNode = tslFn( () => {
+				planeMaterial.shadowPositionNode = Fn( () => {
 
 					const pos = positionWorld.toVar();
 					pos.xz.addAssign( mx_fractal_noise_vec3( positionWorld.mul( 2 ) ).saturate().xz );
@@ -153,7 +154,7 @@
 				} )();
 
 
-				planeMaterial.colorNode = tslFn( () => {
+				planeMaterial.colorNode = Fn( () => {
 
 					const pos = positionWorld.toVar();
 					pos.xz.addAssign( mx_fractal_noise_vec3( positionWorld.mul( 2 ) ).saturate().xz );
@@ -174,6 +175,7 @@
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
+				renderer.shadowMap.enabled = true;
 				renderer.toneMapping = THREE.ACESFilmicToneMapping;
 				document.body.appendChild( renderer.domElement );
 

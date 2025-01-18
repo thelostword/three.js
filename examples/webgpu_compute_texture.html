@@ -15,7 +15,8 @@
 			{
 				"imports": {
 					"three": "../build/three.webgpu.js",
-					"three/tsl": "../build/three.webgpu.js",
+					"three/webgpu": "../build/three.webgpu.js",
+					"three/tsl": "../build/three.tsl.js",
 					"three/addons/": "./jsm/"
 				}
 			}
@@ -24,7 +25,7 @@
 		<script type="module">
 
 			import * as THREE from 'three';
-			import { texture, textureStore, tslFn, instanceIndex, float, uvec2, vec4 } from 'three/tsl';
+			import { texture, textureStore, Fn, instanceIndex, float, uvec2, vec4 } from 'three/tsl';
 
 			import WebGPU from 'three/addons/capabilities/WebGPU.js';
 
@@ -58,9 +59,9 @@
 
 				// create function
 
-				const computeTexture = tslFn( ( { storageTexture } ) => {
+				const computeTexture = Fn( ( { storageTexture } ) => {
 
-					const posX = instanceIndex.remainder( width );
+					const posX = instanceIndex.modInt( width );
 					const posY = instanceIndex.div( width );
 					const indexUV = uvec2( posX, posY );
 
@@ -99,7 +100,7 @@
 				document.body.appendChild( renderer.domElement );
 
 				// compute texture
-				renderer.compute( computeNode );
+				renderer.computeAsync( computeNode );
 
 				window.addEventListener( 'resize', onWindowResize );
 
